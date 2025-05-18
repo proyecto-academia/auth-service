@@ -11,6 +11,7 @@ Route::get('/', [
             'message' => 'Welcome to the API',
             'status' => 200,
             'url' => request()->url(),
+            'path' => request()->path(),
         ]);
     },
 ]);
@@ -28,4 +29,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [UserController::class, 'show']);
     Route::put('/user', [UserController::class, 'update']);
     Route::post('/user/avatar', [UserController::class, 'updateAvatar']);
+});
+
+
+// not found route
+Route::fallback(function () {
+    return response()->json([
+        'message' => 'Not Found',
+        'status' => 404,
+        'url' => request()->url(),
+        'path' => request()->path(),
+    ], 404);
 });
