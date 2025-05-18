@@ -12,6 +12,7 @@ class ApiController extends Controller
             'success' => true,
             'message' => $message,
             'data' => $data,
+            'url' => request()->url(),
         ], $statusCode);
     }
 

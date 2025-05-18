@@ -26,9 +26,10 @@ host('13.61.92.244')
 
 
 // Hooks
-task('build', function () {
-    run('cd {{release_path}} && npm install && npm run build');
-});
+// task('build', function () {
+//     run('cd {{release_path}} && npm install && npm run build');
+// });
+
 
 task('upload:env', function () {
     upload('.env.production', '{{deploy_path}}/shared/.env');
@@ -70,7 +71,7 @@ after('deploy:symlink', 'artisan:route:clear');
 after('deploy:symlink', 'artisan:view:clear');
 after('deploy:symlink', 'artisan:config:clear');
 after('deploy:symlink', 'php-fpm:restart');
-after('deploy:symlink', 'build');
+// after('deploy:symlink', 'build');
 // after('deploy:symlink', 'php artisan l5-swagger:generate');
 
 
