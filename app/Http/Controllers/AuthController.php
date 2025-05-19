@@ -26,11 +26,18 @@ class AuthController extends ApiController
             'password' => bcrypt($request->password),
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        // Crear el token con un tiempo de expiración
+        $token = $user->createToken('auth_token');
+        $expiresAt = now()->addHours(1); // Define el tiempo de expiración (1 hora en este caso)
+
+        // Actualizar la columna expires_at en la tabla personal_access_tokens
+        $token->accessToken->expires_at = $expiresAt;
+        $token->accessToken->save();
 
         return $this->success([
-            'access_token' => $token,
+            'access_token' => $token->plainTextToken,
             'token_type' => 'Bearer',
+            'expires_at' => $expiresAt->toDateTimeString(),
             'user' => $user
         ], 'User registered successfully');
     }
@@ -52,11 +59,18 @@ class AuthController extends ApiController
             return $this->error('Invalid credentials', 401);
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        // Crear el token con un tiempo de expiración
+        $token = $user->createToken('auth_token');
+        $expiresAt = now()->addHours(1); // Define el tiempo de expiración (1 hora en este caso)
+
+        // Actualizar la columna expires_at en la tabla personal_access_tokens
+        $token->accessToken->expires_at = $expiresAt;
+        $token->accessToken->save();
 
         return $this->success([
-            'access_token' => $token,
+            'access_token' => $token->plainTextToken,
             'token_type' => 'Bearer',
+            'expires_at' => $expiresAt->toDateTimeString(),
             'user' => $user
         ], 'Login successful');
     }
@@ -72,19 +86,25 @@ class AuthController extends ApiController
         return $this->success($request->user());
     }
 
-    // Simulación de "refrescar" token: se invalida el actual y se genera uno nuevo
     public function refresh(Request $request)
     {
         $user = $request->user();
 
-        // Opcional: Revocar todos los tokens anteriores
+        // Revocar todos los tokens anteriores
         $user->tokens()->delete();
 
-        $newToken = $user->createToken('auth_token')->plainTextToken;
+        // Crear un nuevo token con un tiempo de expiración
+        $token = $user->createToken('auth_token');
+        $expiresAt = now()->addHours(1); // Define el tiempo de expiración (1 hora en este caso)
+
+        // Actualizar la columna expires_at en la tabla personal_access_tokens
+        $token->accessToken->expires_at = $expiresAt;
+        $token->accessToken->save();
 
         return $this->success([
-            'access_token' => $newToken,
+            'access_token' => $token->plainTextToken,
             'token_type' => 'Bearer',
+            'expires_at' => $expiresAt->toDateTimeString(),
         ], 'Token refreshed');
     }
 }

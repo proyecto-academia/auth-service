@@ -43,7 +43,7 @@ return Application::configure(basePath: dirname(__DIR__))
             $statusCode = method_exists($e, 'getStatusCode')
                 ? $e->getStatusCode()
                 : ($e->status ?? 500);
-            if ($request->is('api/*')) {
+            if ($request->is('/*')) {
                 return response()->json([
                     'success' => false,
                     'route' => $request->path(),
