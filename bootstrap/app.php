@@ -13,7 +13,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) { 
-        $middleware->append(ForceJsonResponse::class);
+        $middleware->append([
+            // Force JSON response
+            ForceJsonResponse::class,
+            \Illuminate\Http\Middleware\HandleCors::class,
+
+        ]);
+        
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (Exception $e, Request $request) {
