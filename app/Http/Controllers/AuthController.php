@@ -11,8 +11,8 @@ class AuthController extends ApiController
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|string|email|max:255|unique:users',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
         ]);
 
@@ -21,8 +21,8 @@ class AuthController extends ApiController
         }
 
         $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
+            'name' => $request->name,
+            'email' => $request->email,
             'password' => bcrypt($request->password),
         ]);
 
@@ -45,7 +45,7 @@ class AuthController extends ApiController
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email'    => 'required|email',
+            'email' => 'required|email',
             'password' => 'required',
         ]);
 
@@ -83,7 +83,14 @@ class AuthController extends ApiController
 
     public function me(Request $request)
     {
-        return $this->success($request->user());
+        $user = $request->user()->load('role'); // Cargar la relación 'role'
+
+        return $this->success([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role->name,  
+        ]);
     }
 
     public function refresh(Request $request)
