@@ -61,7 +61,9 @@ class AuthController extends ApiController
 
         // Crear el token con un tiempo de expiración
         $token = $user->createToken('auth_token');
-        $expiresAt = now()->addHours(1); // Define el tiempo de expiración (1 hora en este caso)
+        // $expiresAt = now()->addHours(1); // Define el tiempo de expiración (1 hora en este caso)
+        //30 minutos
+        $expiresAt = now()->addMinutes(30); // Define el tiempo de expiración (30 minutos en este caso)
 
         // Actualizar la columna expires_at en la tabla personal_access_tokens
         $token->accessToken->expires_at = $expiresAt;
@@ -83,6 +85,12 @@ class AuthController extends ApiController
 
     public function me(Request $request)
     {
+        // extend user jwt token 30 minutes
+        $user = $request->user();
+        $user->currentAccessToken()->update([
+            'expires_at' => now()->addMinutes(30),
+        ]);
+
         $user = $request->user()->load('role'); // Cargar la relación 'role'
 
         return $this->success([
