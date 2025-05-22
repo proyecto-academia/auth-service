@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -20,10 +21,16 @@ class AuthController extends ApiController
             return $this->error('Validation failed', 422, $validator->errors());
         }
 
+        $role_student = Role::where('name', 'student')->first();
+        if (!$role_student) {
+            return $this->error('Role not found', 404);
+        }
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
+            'role_id' => $role_student->id, // Asignar el ID del rol al nuevo usuario
         ]);
 
         // Crear el token con un tiempo de expiración
