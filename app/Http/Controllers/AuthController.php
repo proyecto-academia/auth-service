@@ -54,10 +54,11 @@ class AuthController extends ApiController
         }
 
         $user = User::where('email', $request->email)->first();
-        $user = $user->load('role'); // Cargar la relación 'role'
         if (!$user || !Hash::check($request->password, $user->password)) {
             return $this->error('Invalid credentials', 401);
         }
+        $user = $user->load('role'); // Cargar la relación 'role'
+
 
         // Crear el token con un tiempo de expiración
         $token = $user->createToken('auth_token');
