@@ -54,7 +54,7 @@ class AuthController extends ApiController
         }
 
         $user = User::where('email', $request->email)->first();
-
+        $user = $user->load('role'); // Cargar la relación 'role'
         if (!$user || !Hash::check($request->password, $user->password)) {
             return $this->error('Invalid credentials', 401);
         }
