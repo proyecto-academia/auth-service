@@ -23,10 +23,10 @@ Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])-
 Route::post('/refresh', [\App\Http\Controllers\AuthController::class, 'refresh'])->middleware('auth:sanctum');
 
 Route::get('/me', [\App\Http\Controllers\AuthController::class, 'me'])
-    ->middleware('auth:sanctum')
-    // ->middleware('token.expired')
-    ->middleware('token.expired');
-    // ->middleware('auth:sanctum');
+    // ->middleware('auth:sanctum')
+    ->middleware('token.expired')
+    // ->middleware('token.expired');
+    ->middleware('auth:sanctum');
 
 
 Route::middleware('auth:sanctum')->group(function () {

@@ -19,7 +19,7 @@ class CheckTokenExpired
         $token = $request->user()->currentAccessToken();
 
         if ($token) {
-            $expiresAt = $token->created_at->addMinutes(config('sanctum.expiration'));
+            $expiresAt = $token->expires_at;
             if (Carbon::now()->greaterThan($expiresAt)) {
                 return response()->json([
                     'message' => 'token expired',
