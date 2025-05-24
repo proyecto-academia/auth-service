@@ -18,11 +18,15 @@ Route::get('/', [
 
 
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
-Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
+Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login'])->name('login');
 Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->middleware('auth:sanctum');
-Route::get('/me', [\App\Http\Controllers\AuthController::class, 'me'])->middleware('auth:sanctum');
 Route::post('/refresh', [\App\Http\Controllers\AuthController::class, 'refresh'])->middleware('auth:sanctum');
 
+Route::get('/me', [\App\Http\Controllers\AuthController::class, 'me'])
+    ->middleware('auth:sanctum')
+    // ->middleware('token.expired')
+    ->middleware('token.expired');
+    // ->middleware('auth:sanctum');
 
 
 Route::middleware('auth:sanctum')->group(function () {

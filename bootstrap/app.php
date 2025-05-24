@@ -13,6 +13,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) { 
+
+        $middleware->priority([
+            App\Http\Middleware\CheckTokenExpired::class,
+            App\Http\Middleware\ForceJsonResponse::class,
+        ]);
+        $middleware->alias([
+            'token.expired' => App\Http\Middleware\CheckTokenExpired::class,
+        ]);
+
         $middleware->append([
             // Force JSON response
             ForceJsonResponse::class,
