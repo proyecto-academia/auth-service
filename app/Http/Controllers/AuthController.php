@@ -33,6 +33,7 @@ class AuthController extends ApiController
         ]);
 
         $user->role()->associate($role_student); // Asociar el rol 'student'
+        $user->save();
 
         // Crear el token con un tiempo de expiración
         $token = $user->createToken('auth_token');
