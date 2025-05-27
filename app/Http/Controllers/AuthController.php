@@ -30,8 +30,9 @@ class AuthController extends ApiController
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
-            'role_id' => $role_student->id, // Asignar el ID del rol al nuevo usuario
         ]);
+
+        $user->role()->associate($role_student); // Asociar el rol 'student'
 
         // Crear el token con un tiempo de expiración
         $token = $user->createToken('auth_token');
