@@ -41,6 +41,11 @@ class AuthController extends ApiController
         $token->accessToken->expires_at = $expiresAt;
         $token->accessToken->save();
 
+        $user = User::where('id', $user->id)->with('role')->first(); // Cargar la relación 'role'
+        if (!$user) {
+            return $this->error('User not found', 404);
+        }
+
         return $this->success([
             'access_token' => $token->plainTextToken,
             'token_type' => 'Bearer',
