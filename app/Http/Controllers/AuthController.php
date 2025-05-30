@@ -113,7 +113,9 @@ class AuthController extends ApiController
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
-            'role' => $user->role->name,  
+            'role' => $user->role->name,
+            'token' => $user->currentAccessToken()->plainTextToken,
+            'expires_at' => $user->currentAccessToken()->expires_at->toDateTimeString(),  
         ]);
     }
 
