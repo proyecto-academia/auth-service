@@ -156,9 +156,8 @@ class AuthController extends ApiController
         $response = Http::withToken($request->bearerToken())
             ->get($remoteUrl);
 
-        dd($response->json()); // Debugging line to see the response
 
-        if ($response->successful() && $response->json('authorized') === true) {
+        if ($response->successful() && $response->json('data')['allowed'] === true) {
             UserPolicy::create([
                 'user_id' => $user->id,
                 'policy_id' => $policy->id,
