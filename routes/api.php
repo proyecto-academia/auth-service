@@ -23,6 +23,7 @@ Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])-
 Route::post('/refresh', [\App\Http\Controllers\AuthController::class, 'refresh'])->middleware('auth:sanctum');
 
 Route::get('/me', [\App\Http\Controllers\AuthController::class, 'me'])->middleware(['auth:sanctum', 'token.expired']);
+Route::post('/check-policy', [\App\Http\Controllers\AuthController::class, 'checkPolicy'])->middleware(['auth:sanctum', 'token.expired']);
 
 
 Route::middleware('auth:sanctum')->group(function () {

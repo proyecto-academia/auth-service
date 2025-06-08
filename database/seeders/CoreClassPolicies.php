@@ -15,7 +15,7 @@ class CoreClassPolicies extends Seeder
     {
         // Inserta las políticas si no existen
         DB::table('policies')->updateOrInsert(
-            ['name' => 'seeClass'],
+            ['name' => 'showClass'],
             ['request_url' => 'https://mardev.es/api/core/policies/classes/show/{id}']
         );
 
