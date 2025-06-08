@@ -3,9 +3,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use App\Models\User;
+use App\Models\UserPolicy;
+use App\Models\Policy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Http;
+
 
 class AuthController extends ApiController
 {
@@ -115,9 +119,56 @@ class AuthController extends ApiController
             'email' => $user->email,
             'role' => $user->role->name,
             'token' => $request->bearerToken(),
-            'expires_at' => $user->currentAccessToken()->expires_at->toDateTimeString(),  
+            'expires_at' => $user->currentAccessToken()->expires_at->toDateTimeString(),
         ]);
     }
+
+
+    public function checkPolicy(Request $request)
+    {
+        $request->validate([
+            'policy' => 'required|string',
+            'model_id' => 'required|integer',
+        ]);
+
+        $user = $request->user();
+        $user->currentAccessToken()->update([
+            'expires_at' => now()->addMinutes(30),
+        ]);
+
+        $policy = Policy::where('name', $request->policy)->first();
+        if (!$policy) {
+            return $this->error('Policy not found', 404);
+        }
+
+        $hasAccess = UserPolicy::where('user_id', $user->id)
+            ->where('policy_id', $policy->id)
+            ->where('model_id', $request->model_id)
+            ->exists();
+
+        if ($hasAccess) {
+            return $this->success(['authorized' => true], 'User authorized');
+        }
+
+        // Sustituir {id} en request_url por el model_id recibido
+        $remoteUrl = str_replace('{id}', $request->model_id, $policy->request_url);
+
+        $response = Http::withToken($request->bearerToken())
+            ->get($remoteUrl);
+
+        if ($response->successful() && $response->json('authorized') === true) {
+            UserPolicy::create([
+                'user_id' => $user->id,
+                'policy_id' => $policy->id,
+                'model_id' => $request->model_id,
+            ]);
+
+            return $this->success(['authorized' => true], 'User authorized');
+        }
+
+        return $this->error('Unauthorized', 403);
+    }
+
 
     public function refresh(Request $request)
     {
